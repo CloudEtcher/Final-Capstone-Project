@@ -1,0 +1,70 @@
+name: CI and Terraform Workflow
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        
+      - name: Create S3 bucket (If not exists)
+        run: |
+          aws s3api head-bucket --bucket alt-bucket-ecommerce-test-24-08-05 || aws s3 mb s3://alt-bucket-ecommerce-test-24-08-05
+
+      - name: Initialize and Apply Terraform (EKS Cluster)
+        run: |
+          terraform -chdir=terraform/ init
+          terraform -chdir=terraform apply --auto-approve
+
+      - name: Update Kubeconfig 
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name sockShop
+          kubectl create namespace sock-shop --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4.2.0
+
+      - name: Add Helm Repositories
+        run: |
+          helm repo add ingress https://kubernetes.github.io/ingress-nginx  
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+
+      - name: Install Helm Charts
+        run: |
+          helm upgrade --install prometheus prometheus/kube-prometheus-stack --namespace sock-shop
+          helm upgrade --install ingress ingress/ingress-nginx --namespace sock-shop
+
+      - name: Apply Cert-Manager
+        run: |
+          kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.crds.yaml
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.1/cert-manager.yaml
+
+      - name: Deploy Application Manifests
+        run: kubectl apply -f manifest/ -n sock-shop

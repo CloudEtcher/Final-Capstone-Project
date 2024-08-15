@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cloudetcher-certificate
+  namespace: sock-shop
+spec:
+  secretName: cloudetcher-secret
+  issuerRef: 
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: cloudetcher.tech
+  dnsNames:
+  - cloudetcher.tech
