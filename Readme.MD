@@ -27,7 +27,7 @@ This project involves deploying the Sock-shop microservices-based e-commerce app
 
 ## Flowchart
 
-![Flowchart](img/flowchart.png)
+![Flowchart](img/Flowchart.png)
 
 ## Deployment Steps
 
