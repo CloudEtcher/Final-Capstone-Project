@@ -25,6 +25,10 @@ This project involves deploying the Sock-shop microservices-based e-commerce app
 * Dependencies: AWS CLI, kubectl, Helm (package manager for Kubernetes), and Terraform
 * Github Actions for CI/CD
 
+## Flowchart
+
+![Flowchart](img/flowchart.png)
+
 ## Deployment Steps
 
 ### 1. Initialize Terraform and Set Up Kubernetes Cluster on AWS
