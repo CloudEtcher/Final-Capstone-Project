@@ -49,7 +49,7 @@ aws eks --region <region> update-kubeconfig --name <cluster_name>
 
 Deploy the application using the provided deployment YAML file.
 
-![app deployment](img/app deployment.png)
+![app deployment](img/app%20deployment.png)
 
 ### 4. Confirm Application Status
 
@@ -100,7 +100,7 @@ helm repo add jetstack https://charts.jetstack.io --force-update
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.2/cert-manager.yaml
 ```
 
-![Create Certificate](img/Certificate2.png)
+![Create Certificate](img/certificate2.png)
 
 ### 10. Apply Let's Encrypt Certificate
 
@@ -128,8 +128,9 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm install prome prometheus-community/kube-prometheus-stack -n sock-shop
 ```
 
-![Prometheus installed](<img/prometheus installed.png>)
-![Prometheus and Grafana running](<img/Prometheus and Grafana running.png>)
+![Prometheus installed](<img/Prometheus-Installed.png>)
+
+![Prometheus and Grafana running](<img/Prometheus-and-grafana-running.png>)
 
 ### 13. Access Grafana Dashboard
 
@@ -147,7 +148,7 @@ kubectl get secret prometheus-grafana -n sock-shop -o jsonpath="{.data.admin-pas
 
 Launch Prometheus on your browser (no credentials required).
 
-![prometheus](<img/prometheus running.png>)
+![prometheus](<img/Prometheus-running.png>)
 
 ### 15. Configure Alerting with Slack
 
